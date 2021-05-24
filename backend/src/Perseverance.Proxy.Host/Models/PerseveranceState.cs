@@ -8,7 +8,7 @@ namespace Perseverance.Proxy.Host.Models
     {
         public byte X { get; init; }
         public byte Y { get; init; }
-        public bool[,] Map { get; init; }
+        public bool?[,] Map { get; init; }
         public byte W { get; init; }
         public byte H { get; init; }
         public ICollection<Obstacle> Obstacles { get; set; }

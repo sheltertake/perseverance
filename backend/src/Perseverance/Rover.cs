@@ -27,8 +27,10 @@ namespace Perseverance
             if (planet.H < y)
                 throw new ArgumentException(nameof(y));
 
-            if (planet[x, y])
+            if (planet[x, y].HasValue)
                 throw new ArgumentException(nameof(planet));
+
+            planet.Land(x,y);
 
             Planet = planet;
             X = x;
@@ -70,10 +72,15 @@ namespace Perseverance
                 target = 0;
             }
 
-            if (Planet[X, target])
+            if (Planet[X, target].HasValue)
                 return false;
 
+            Planet.Map[X, Y] = null;
+            Planet.Map[X, target] = true;
+
             Y = target;
+
+           
 
             return true;
         }
@@ -90,8 +97,12 @@ namespace Perseverance
                 target = 0;
             }
 
-            if (Planet[target, Y])
+            if (Planet[target, Y].HasValue)
                 return false;
+
+
+            Planet.Map[X, Y] = null;
+            Planet.Map[target, Y] = true;
 
             X = target;
 
@@ -111,8 +122,12 @@ namespace Perseverance
                 target = Planet.W;
             }
 
-            if (Planet[target, Y])
+            if (Planet[target, Y].HasValue)
                 return false;
+
+
+            Planet.Map[X, Y] = null;
+            Planet.Map[target, Y] = true;
 
             X = target;
 
@@ -132,8 +147,12 @@ namespace Perseverance
                 target = Planet.H;
             }
 
-            if (Planet[X, target])
+            if (Planet[X, target].HasValue)
                 return false;
+
+
+            Planet.Map[X, Y] = null;
+            Planet.Map[X, target] = true;
 
             Y = target;
 
@@ -150,8 +169,8 @@ namespace Perseverance
         /// </summary>
         /// <returns></returns>
         public static Rover Create(
-            byte x = 0,
-            byte y = 0,
+            byte x = 1,
+            byte y = 1,
             byte planetHeight = 3,
             byte planetWidth = 3,
             Obstacle[] obstacles = null
@@ -159,12 +178,33 @@ namespace Perseverance
         {
             return new Rover(
                 planet: new Planet(
-                    h: planetHeight,
-                    w: planetWidth,
+                    h: --planetHeight,
+                    w: --planetWidth,
                     obstacles: obstacles
                 ),
                 x: x,
                 y: y);
         }
+
+        public static string ToCommand(this string keyboardEventCode)
+        {
+            return keyboardEventCode switch
+            {
+                "ArrowRight" => "R",
+                "ArrowLeft" => "L",
+                "ArrowUp" => "F",
+                "ArrowDown" => "B",
+                _ => ""
+            };
+        }
+
+        //private static class Commands
+        //{
+        //    internal const char F = 'F';
+        //    internal const char B = 'B';
+        //    internal const char L = 'L';
+        //    internal const char R = 'R';
+        //}
+
     }
 }

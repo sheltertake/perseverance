@@ -41,9 +41,7 @@ namespace Perseverance.Proxy.Host
             }
 
             app.UseSerilogRequestLogging();
-
-            app.UseHttpsRedirection();
-
+            
             app.UseRouting();
 
             app.UseAuthorization();
@@ -52,9 +50,7 @@ namespace Perseverance.Proxy.Host
             {
                 endpoints.MapHub<NotificationHub>("/notifications");
             });
-
-
-
+            
             app.UseSpa(spa =>
             {
                 if (env.IsDevelopment())
