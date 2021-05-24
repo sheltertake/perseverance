@@ -18,7 +18,7 @@ I want to use event sourcing.
 
 In order to implement this MVP I'll create 
  - a dotnet host 
- - an very simple angular spa
+ - a very simple angular spa
 
 The angular SPA will communicate with dotnet host via websockets.
 Each command sent by Angular application will be of type FIRE & FORGET.
@@ -49,8 +49,8 @@ The handlers
 If this Rover would be implemented in the real world probably it could be something like this.
 
 - ROVER HOST: (aka The Rover on Mars). On the remote Rover I'd ran a worker, a daemon/long running process. 
-   - This process should be able to subscribe an enterprise bus and should listen commands sent by a manager in a specific queue.
-   - It should also publish its state after each successfully movement. This state should be published in a topic and not in a queue because probably many process in the future could be interested on this messages.
+   - This process should be able to subscribe an enterprise bus and should listen commands sent by a back-office user via specific application in a specific queue.
+   - It should also publish its state after each successfully movement. This state should be published in a topic and not in a queue because probably many processes in the future could be interested on this messages.
 
 - BUS 
   - COMMANDS (queue): A/many queue(s) should be created on the BUS and each remote Rover should dequeue commands sent from the earth for them. The commands are sent via dedicated application (SPA + BFF)
@@ -62,11 +62,12 @@ If this Rover would be implemented in the real world probably it could be someth
     - publisher: ROVER HOST
     - subscriber: ROVER STATE LISTENER
 
-- ROVER SPA + ROVER PROXY/BFF: A dedicated application is responsible to drive remotely the rover on mars. It send on a specific queue of the BUS, commands for the ROVER host on mars. The ROVER SPA/PROXY should know the current state of the Rover (the current position) and should be able to receive the updated state each time the ROVER on mars move successfully. In order to have the initial state it must use the ROVER STATE API (micro-service).  
+- ROVER SPA + ROVER PROXY/BFF: A dedicated application is responsible to drive remotely the rover on mars. It send on a specific queue of the BUS, commands for the ROVER host on mars. The ROVER SPA/PROXY should knows the current state of the Rover (the current position) and should be able to receive the updated state each time the ROVER on mars moves successfully. In order to have the initial state it must uses the ROVER STATE API (micro-service).  
 
-- STATE LISTENER: The STATE Topic is subscribed among other possible authenticated listeners by the ROVER STATE Listener, a long running process/worker/function responsible to listen every STATE published by the ROVER on Mars. Each state is saved in a dedicated store. Each state is immutable.
+- ROVER STATE MICRO-SERVICE:
+  - STATE LISTENER: The STATE Topic is subscribed among other possible authenticated listeners by the ROVER STATE Listener, a long running process/worker/function responsible to listen every STATE published by the ROVER on Mars. States are saved in a dedicated store. Each state is immutable.
 
-- STATE API + STORE: The STATE Api is the micro-service responsible of maintain the current and the previous states of the ROVER on mars. It expose a REST Api with WRITE capabilities consumable from STATE Listener and only READ capabilities exposed to ROVER SPA/PROXY.
+  - STATE API + STORE: The STATE Api is the micro-service responsible of maintain the current and the previous states of the ROVER on mars. It expose a REST Api with WRITE capabilities consumable from STATE Listener and only READ capabilities exposed to ROVER SPA/PROXY.
 ## 02 - TDD - Implement the Rover domain model
 
 In  the second Iteration I implemented in TDD the Perseverance Library.
