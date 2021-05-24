@@ -39,6 +39,7 @@ The handlers
  - Command Handler will invoke the ROVER Library and will continue publishing the state via a new message
  - State Handler will listen for new states and will push via signalr Hub the new state to the Angular application
 
+The MVP follows the event sourcing architecture, not the possible real-world architecture. Probably all the code I put in the "Proxy/Backend for frontend" Api could be completely rewritten. 
 
 ## 03 - Architecture
 
