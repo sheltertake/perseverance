@@ -112,7 +112,7 @@ I implemented probably wrongly the capacity of the rover to move in all directio
 
 So instead of move the rover with this command "FFRBB" (forward, forward, right, back back) I should have implemented something like "FFRBB" (forward, forward, rotate, back back).
 
-In my implementation rover move in all 4 directions. Probably it's a mistake and I should change the code. But I prefer to continue the exercise and move on despite the mistake I did.
+In my implementation rover moves in all 4 directions. Probably it's a mistake and I should change the code. But I prefer to continue the exercise and move on despite the mistake I did.
 
 ## 01 - Solution
 
