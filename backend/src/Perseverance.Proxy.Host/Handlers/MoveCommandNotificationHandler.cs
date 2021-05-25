@@ -29,7 +29,6 @@ namespace Perseverance.Proxy.Host.Handlers
 
             return _roverService.MoveAsync(notification.Guid, notification.Command).ContinueWith(x =>
             {
-                //_logger.LogInformation("LandAsync - " + x.Result.Name);
                 _mediator.Publish(new StateEvent(notification.ConnectionId, x.Result), cancellationToken);
             }, cancellationToken);
         }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 
 namespace Perseverance
 {
@@ -74,15 +73,12 @@ namespace Perseverance
                 target = 0;
             }
 
-            Console.WriteLine($"Y from {Y} to {target}");
-            if (Planet[target,X].HasValue)
+            if (Planet[target, X].HasValue)
                 return false;
 
             Planet.Map[Y, X] = null;
             Planet.Map[target, X] = true;
             Y = target;
-
-
 
             return true;
         }
@@ -98,7 +94,7 @@ namespace Perseverance
             {
                 target = 0;
             }
-            Console.WriteLine($"X from {X} to {target}");
+
             if (Planet[Y, target].HasValue)
                 return false;
 
@@ -125,7 +121,6 @@ namespace Perseverance
                 target = Planet.W;
             }
 
-            Console.WriteLine($"X from {X} to {target}");
             if (Planet[Y, target].HasValue)
                 return false;
 
@@ -150,12 +145,11 @@ namespace Perseverance
                 target = Planet.H;
             }
 
-            Console.WriteLine($"Y from {Y} to {target}");
             if (Planet[target, X].HasValue)
                 return false;
-            
+
             Planet.Map[Y, X] = null;
-            Planet.Map[target,X] = true;
+            Planet.Map[target, X] = true;
 
             Y = target;
 
@@ -188,26 +182,6 @@ namespace Perseverance
                 x: x,
                 y: y);
         }
-
-        //public static string ToCommand(this string keyboardEventCode)
-        //{
-        //    return keyboardEventCode switch
-        //    {
-        //        "ArrowRight" => "R",
-        //        "ArrowLeft" => "L",
-        //        "ArrowUp" => "F",
-        //        "ArrowDown" => "B",
-        //        _ => ""
-        //    };
-        //}
-
-        //private static class Commands
-        //{
-        //    internal const char F = 'F';
-        //    internal const char B = 'B';
-        //    internal const char L = 'L';
-        //    internal const char R = 'R';
-        //}
 
     }
 }

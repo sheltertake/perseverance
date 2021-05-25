@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography.X509Certificates;
-
-namespace Perseverance
+﻿namespace Perseverance
 {
     /// <summary>
     /// planet is the surface where rover move
@@ -32,6 +30,6 @@ namespace Perseverance
                 Map[obstacle.Y, obstacle.X] = false;
             }
         }
-        
+
     }
 }
