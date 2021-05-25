@@ -12,10 +12,10 @@
     <PackageReference Include="NUnit" Version="3.13.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
-    <PackageReference Include="SpecFlow.NUnit" Version="3.8.14" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Perseverance.Proxy.Host\Perseverance.Proxy.Host.csproj" />
     <ProjectReference Include="..\..\src\Perseverance\Perseverance.csproj" />
   </ItemGroup>
 

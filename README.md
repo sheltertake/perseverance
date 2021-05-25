@@ -41,6 +41,30 @@ The handlers
 
 The MVP follows the event sourcing architecture, not the possible real-world architecture. Probably all the code I put in the "Proxy/Backend for frontend" Api could be completely rewritten. 
 
+### 03.02 Mvp Solution
+
+ - moved src/tests + VS solution in dedicated backend folder
+ - mkdir frontend && cd frontend
+
+```cmd
+ng new frontend --skip-install --minimal
+npm i
+npm install @ngrx/store --save
+npm install @microsoft/signalr --save
+```
+
+ - cd backend/src
+
+```cmd
+dotnet new api -n Proxy.Host -o Proxy.Host/
+```
+ - add new Host to the solution
+ - remove controllers
+ - edit csproj adding the following packages
+
+
+
+
 ## 03 - Architecture
 
 ### 03.1 Real World implementation

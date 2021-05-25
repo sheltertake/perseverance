@@ -2,6 +2,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Perseverance;
 
 namespace PerseveranceUnitTests
 {
@@ -280,7 +281,7 @@ namespace PerseveranceUnitTests
         [Test]
         public void RoverCantMoveForwardThroughObstacle()
         {
-            var obstacles = new[] { new Obstacle { X = 0, Y = 2 } };
+            var obstacles = new[] { new Point { X = 0, Y = 2 } };
             var planet = new Planet(2, 2, obstacles);
             var rover = new Rover(planet, 0, 0);
             rover.Move("F");
@@ -307,7 +308,7 @@ namespace PerseveranceUnitTests
         [Test]
         public void RoverCantMoveBackwardThroughObstacle()
         {
-            var obstacles = new[] { new Obstacle { X = 0, Y = 0 } };
+            var obstacles = new[] { new Point { X = 0, Y = 0 } };
             var planet = new Planet(2, 2, obstacles);
             var rover = new Rover(planet, 0, 2);
             rover.Move("B");
@@ -334,7 +335,7 @@ namespace PerseveranceUnitTests
         [Test]
         public void RoverCantMoveRightThroughObstacle()
         {
-            var obstacles = new[] { new Obstacle { X = 2, Y = 0 } };
+            var obstacles = new[] { new Point { X = 2, Y = 0 } };
             var planet = new Planet(2, 2, obstacles);
             var rover = new Rover(planet, 0, 0);
             rover.Move("R");
@@ -361,7 +362,7 @@ namespace PerseveranceUnitTests
         [Test]
         public void RoverCantMoveLeftThroughObstacle()
         {
-            var obstacles = new[] { new Obstacle { X = 0, Y = 0 } };
+            var obstacles = new[] { new Point { X = 0, Y = 0 } };
             var planet = new Planet(2, 2, obstacles);
             var rover = new Rover(planet, 2, 0);
             rover.Move("L");
@@ -402,7 +403,7 @@ namespace PerseveranceUnitTests
         [Test]
         public void RoverShouldNotLandOverObstaclePlanetOtherwiseExplodes([Range(0, 2)] byte x, [Range(0, 2)] byte y)
         {
-            var obstacles = new[] { new Obstacle { X = 1, Y = 1 } };
+            var obstacles = new[] { new Point { X = 1, Y = 1 } };
             var planet = new Planet(2, 2, obstacles);
 
             // rover 1 explodes
@@ -421,177 +422,4 @@ namespace PerseveranceUnitTests
         }
     }
 
-
-    /// <summary>
-    /// planet is the surface where rover move
-    ///  - has a certain initial dimension (x,y)
-    /// </summary>
-    public readonly struct Planet
-    {
-        public byte H { get; }
-        public byte W { get; }
-
-        private readonly bool[,] map;
-
-        public bool this[byte x, byte y] => map[x, y];
-
-        public Planet(byte h, byte w, Obstacle[] obstacles = null)
-        {
-            H = h;
-            W = w;
-
-            map = new bool[w + 1, h + 1];
-
-            if (obstacles == null) return;
-
-            foreach (var obstacle in obstacles)
-            {
-                map[obstacle.X, obstacle.Y] = true;
-            }
-        }
-    }
-
-    public struct Obstacle
-    {
-        public byte X { get; init; }
-        public byte Y { get; init; }
-    }
-    public class Rover
-    {
-        private static class Commands
-        {
-            internal const char F = 'F';
-            internal const char B = 'B';
-            internal const char L = 'L';
-            internal const char R = 'R';
-        }
-
-        public byte X { get; private set; }
-        public byte Y { get; private set; }
-        private Planet Planet { get; }
-
-
-        public Rover(
-            Planet planet,
-            byte x = 0,
-            byte y = 0)
-        {
-            if (planet.W < x)
-                throw new ArgumentException(nameof(x));
-            if (planet.H < y)
-                throw new ArgumentException(nameof(y));
-
-            if (planet[x, y])
-                throw new ArgumentException(nameof(planet));
-
-            Planet = planet;
-            X = x;
-            Y = y;
-        }
-
-        public void Move(string input)
-        {
-            foreach (var c in input.ToUpper())
-            {
-                if (!Next(c))
-                    break;
-            }
-        }
-
-        private bool Next(char input)
-        {
-            return input switch
-            {
-                Commands.F => Forward(),
-                Commands.B => Backward(),
-                Commands.L => Left(),
-                Commands.R => Right(),
-                _ => false,
-            };
-        }
-        private bool Forward()
-        {
-            var target = Y;
-
-            if (target < Planet.H)
-            {
-                target++;
-            }
-            else
-            {
-                target = 0;
-            }
-
-            if (Planet[X, target])
-                return false;
-
-            Y = target;
-
-            return true;
-        }
-        private bool Right()
-        {
-            var target = X;
-
-            if (target < Planet.W)
-            {
-                target++;
-            }
-            else
-            {
-                target = 0;
-            }
-
-            if (Planet[target, Y])
-                return false;
-
-            X = target;
-
-            return true;
-        }
-
-        private bool Left()
-        {
-            var target = X;
-
-            if (target > 0)
-            {
-                target--;
-            }
-            else
-            {
-                target = Planet.W;
-            }
-
-            if (Planet[target, Y])
-                return false;
-
-            X = target;
-
-            return true;
-        }
-
-        private bool Backward()
-        {
-            var target = Y;
-
-            if (target > 0)
-            {
-                target--;
-            }
-            else
-            {
-                target = Planet.H;
-            }
-
-            if (Planet[X, target])
-                return false;
-
-            Y = target;
-
-            return true;
-        }
-
-
-    }
 }
