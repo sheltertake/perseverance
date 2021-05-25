@@ -45,7 +45,7 @@ namespace Perseverance.Proxy.Host.IntegrationTests
 
             var connectionId = Guid.NewGuid().ToString();
             var state = testServer.Services.GetRequiredService<IPerseveranceStateService>();
-            await mediator.Publish(new LandCommand(connectionId));
+            await mediator.Publish(new LandCommand(connectionId, new LandOptions()));
             var guid = state.Cache.Keys.First();
             await mediator.Publish(new MoveCommand(connectionId, guid, "F"));
 

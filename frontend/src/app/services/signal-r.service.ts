@@ -15,7 +15,7 @@ export class SignalRService {
   
   public startConnection = (options: Options) => {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('http://localhost:5000/notifications')
+      .withUrl(window.location.origin + '/notifications')
       .configureLogging(signalR.LogLevel.Information)
       .build();
     this.hubConnection

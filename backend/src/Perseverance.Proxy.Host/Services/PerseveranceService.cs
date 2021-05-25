@@ -32,13 +32,6 @@ namespace Perseverance.Proxy.Host.Services
                     w: options.W,
                     h: options.H,
                     obstacles: options.RandomObstacles()
-                    //obstacles: new[]
-                    //{
-                    //    new Point{ X = 0, Y = 0},
-                    //    new Point{ X = 2, Y = 2},
-                    //    new Point{ X = 0, Y = 2},
-                    //    new Point{ X = 2, Y = 0}
-                    //}
                     )
                 .ToState(Guid.NewGuid());
 
@@ -52,13 +45,10 @@ namespace Perseverance.Proxy.Host.Services
             _logger.LogInformation("MoveAsync {command}", command);
 
             var cache = _stateService.Cache[guid];
-            _logger.LogInformation(JsonConvert.SerializeObject(cache.Map));
 
             var rover = cache
                         .ToRover()
                         .Move(command);
-
-            _logger.LogInformation(JsonConvert.SerializeObject(rover.Planet.Map));
 
             var state = rover.ToState(guid);
 
