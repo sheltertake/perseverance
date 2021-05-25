@@ -28,30 +28,46 @@ export interface IState
   selector: 'app-root',
   template: `
     <!-- <pre>{{state$ | async | json}}</pre> -->
-    <div class="container">
-      <div class="row" *ngFor="let row of (state$ | async)?.map; index as y;">
-        <div class="square" *ngFor="let cell of row; index as x;">
-          <sub>y: {{y}} x: {{x}}</sub>
-          {{cell | tris}}
+
+      <div class="flex-container" *ngFor="let row of (state$ | async)?.map;">
+        <div class="flex-item" *ngFor="let cell of row;" [style.background-color]="cell | trisColor">
         </div>
       </div>
-    </div>    
+
   `,
   styles: [`
-    :host{height:100vh}
+    /* https://stackoverflow.com/questions/29307971/css-grid-of-squares-with-flexbox */
+    .flex-container {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        display: flex;
+        flex-flow: row;
+        justify-content: space-around;
+     
+        line-height:30px;
+    }
+    .flex-item {
+        background: tomato;
+        color: white;
+        flex: 1 0 auto;
+        height:auto;
+    }
+    .flex-item:before {
+        content:'';
+        float:left;
+        padding-top:100%;
+    }
   `]
 })
 export class AppComponent {
 
-  // map$: Observable<any> | undefined;
-  // map2$: Observable<any> | undefined;
   state$!: Observable<IState>;
   state!: IState;
   sub!: Subscription;
 
   constructor(
     private signalRService: SignalRService,
-    // private simpleService: SimpleService,
     private simpleStateService: SimpleStateService,
   ) { }
 
@@ -59,7 +75,6 @@ export class AppComponent {
     this.signalRService.startConnection();
     this.signalRService.registerOnServerEvents();
 
-    // this.map$ = this.simpleService.Get();
     this.state$ = this.simpleStateService.state$;
     this.sub = this.simpleStateService.state$.subscribe(x =>{
       this.state = x;
@@ -77,7 +92,7 @@ export class AppComponent {
     console.log(event, String.fromCharCode(event.keyCode));
     const command = this.toCommand(event);
     if (command) {
-      // this.map$ = this.simpleService.Get(true);
+      event.stopPropagation();
       this.signalRService.MoveRequestAsync(this.state.guid, command);
     }
   }
@@ -103,28 +118,13 @@ export class AppComponent {
 export class TrisPipe implements PipeTransform {
   transform(value: boolean | null): string {
     return value === true ? "O" :
-      value === false ? "X" : " ";
+      value === false ? "X" : "";
   }
 }
-@Injectable({
-  providedIn: 'root'
-})
-export class SimpleService {
-
-  Get(testRight: boolean = false): Observable<any> {
-    const map = [
-      [false, null, false],
-      [null, true, null],
-      [false, null, false]
-    ];
-
-    if(testRight){
-      console.log('testRight', map);
-      map[1][1]=null;
-      map[1][2]=true;
-      console.log(map)
-    }
-
-    return of(map);
+@Pipe({ name: 'trisColor' })
+export class TrisColorPipe implements PipeTransform {
+  transform(value: boolean | null): string {
+    return value === true ? "black" :
+      value === false ? "red" : "white";
   }
 }

@@ -1,5 +1,7 @@
 ﻿using Perseverance.Proxy.Host.Models;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -26,11 +28,10 @@ namespace Perseverance.Proxy.Host.Services
         }
         public Task<PerseveranceState> LandAsync()
         {
-
             var state = RoverFactory.Create(
                     x: 1,
                     y: 1,
-                    w: 4,
+                    w: 3,
                     h: 3,
                     obstacles: new[]
                     {
