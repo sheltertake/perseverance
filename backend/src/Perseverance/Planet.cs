@@ -1,4 +1,6 @@
-﻿namespace Perseverance
+﻿using System;
+
+namespace Perseverance
 {
     /// <summary>
     /// planet is the surface where rover move
@@ -9,13 +11,13 @@
         public byte H { get; }
         public byte W { get; }
 
-        public bool?[,] Map { get; set; }
+        public bool?[,] Map { get; }
 
-        public Obstacle[] Obstacles { get; }
+        public Point[] Obstacles { get; }
 
-        public bool? this[byte y, byte x] => Map[y, x];
+        //public bool? this[byte y, byte x] => Map[y, x];
 
-        public Planet(byte w, byte h, Obstacle[] obstacles = null)
+        public Planet(byte w, byte h, Point[] obstacles = null)
         {
             W = w;
             H = h;
@@ -31,5 +33,42 @@
             }
         }
 
+        public void TryLand(byte Y, byte X)
+        {
+            if (Map[Y, X].HasValue)
+                throw new ArgumentException(nameof(Y));
+
+            Map[Y, X] = true;
+        }
+
+        public Point? TryMove(byte Y, byte X, byte targetY, byte targetX)
+        {
+            Console.WriteLine($"X {X} target {targetX} {targetX == byte.MaxValue} {W}");
+            // wrap corrections
+            if (targetX == byte.MaxValue)
+                targetX = W;
+            if (targetY == byte.MaxValue)
+                targetY = H;
+            
+            if (targetX > W)
+                targetX = 0;
+            if (targetY > H)
+                targetY = 0;
+            
+            Console.WriteLine($"FIXED X {X} target {targetX}");
+
+            // obstacles
+            if (Map[targetY, targetX].HasValue)
+                    return null;
+
+            Map[Y, X] = null;
+            Map[targetY, targetX] = true;
+
+            return new Point()
+            {
+                Y = targetY,
+                X = targetX
+            };
+        }
     }
 }

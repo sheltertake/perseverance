@@ -26,16 +26,12 @@ namespace Perseverance
                 throw new ArgumentException(nameof(x));
             if (planet.H < y)
                 throw new ArgumentException(nameof(y));
-
-            if (planet[y, x].HasValue)
-                throw new ArgumentException(nameof(planet));
-
-
+            
             Planet = planet;
             X = x;
             Y = y;
 
-            Planet.Map[Y, X] = true;
+            Planet.TryLand(Y, X);
         }
 
         public Rover Move(string input)
@@ -60,103 +56,46 @@ namespace Perseverance
                 _ => false,
             };
         }
-        private bool Forward()
-        {
-            var target = Y;
 
-            if (target < Planet.H)
-            {
-                target++;
-            }
-            else
-            {
-                target = 0;
-            }
-
-            if (Planet[target, X].HasValue)
-                return false;
-
-            Planet.Map[Y, X] = null;
-            Planet.Map[target, X] = true;
-            Y = target;
-
-            return true;
-        }
         private bool Right()
         {
-            var target = X;
+            byte target = (byte) (X + 1);
+            var point = Planet.TryMove(Y, X, Y, target);
+            if (point.HasValue)
+                X = point.Value.X;
 
-            if (target < Planet.W)
-            {
-                target++;
-            }
-            else
-            {
-                target = 0;
-            }
-
-            if (Planet[Y, target].HasValue)
-                return false;
-
-
-            Planet.Map[Y, X] = null;
-            Planet.Map[Y, target] = true;
-
-
-            X = target;
-
-            return true;
+            return point.HasValue;
         }
 
         private bool Left()
         {
-            var target = X;
+            byte target = (byte)(X - 1);
+            var point = Planet.TryMove(Y, X, Y, target);
+            if (point.HasValue)
+                X = point.Value.X;
 
-            if (target > 0)
-            {
-                target--;
-            }
-            else
-            {
-                target = Planet.W;
-            }
-
-            if (Planet[Y, target].HasValue)
-                return false;
-
-
-            Planet.Map[Y, X] = null;
-            Planet.Map[Y, target] = true;
-
-            X = target;
-
-            return true;
+            return point.HasValue;
         }
+
         private bool Backward()
         {
-            var target = Y;
+            byte target = (byte)(Y - 1);
+            var point = Planet.TryMove(Y, X, target, X);
+            if (point.HasValue)
+                Y = point.Value.Y;
 
-            if (target > 0)
-            {
-                target--;
-            }
-            else
-            {
-                target = Planet.H;
-            }
-
-            if (Planet[target, X].HasValue)
-                return false;
-
-            Planet.Map[Y, X] = null;
-            Planet.Map[target, X] = true;
-
-            Y = target;
-
-            return true;
+            return point.HasValue;
         }
 
+        private bool Forward()
+        {
+            byte target = (byte)(Y + 1);
+            var point = Planet.TryMove(Y, X, target, X);
+            if (point.HasValue)
+                Y = point.Value.Y;
 
+            return point.HasValue;
+        }
     }
 
     public static class RoverFactory
@@ -170,7 +109,7 @@ namespace Perseverance
             byte y = 1,
             byte w = 3,
             byte h = 3,
-            Obstacle[] obstacles = null
+            Point[] obstacles = null
         )
         {
             return new Rover(

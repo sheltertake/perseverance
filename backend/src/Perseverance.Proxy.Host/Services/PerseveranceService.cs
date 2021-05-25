@@ -34,10 +34,10 @@ namespace Perseverance.Proxy.Host.Services
                     h: 3,
                     obstacles: new[]
                     {
-                        new Obstacle{ X = 0, Y = 0},
-                        new Obstacle{ X = 2, Y = 2},
-                        new Obstacle{ X = 0, Y = 2},
-                        new Obstacle{ X = 2, Y = 0}
+                        new Point{ X = 0, Y = 0},
+                        new Point{ X = 2, Y = 2},
+                        new Point{ X = 0, Y = 2},
+                        new Point{ X = 2, Y = 0}
                     }
                     )
                 .ToState(Guid.NewGuid());

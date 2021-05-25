@@ -281,7 +281,7 @@ namespace PerseveranceUnitTests
         [Test]
         public void RoverCantMoveForwardThroughObstacle()
         {
-            var obstacles = new[] { new Obstacle { X = 0, Y = 2 } };
+            var obstacles = new[] { new Point { X = 0, Y = 2 } };
             var planet = new Planet(2, 2, obstacles);
             var rover = new Rover(planet, 0, 0);
             rover.Move("F");
@@ -308,7 +308,7 @@ namespace PerseveranceUnitTests
         [Test]
         public void RoverCantMoveBackwardThroughObstacle()
         {
-            var obstacles = new[] { new Obstacle { X = 0, Y = 0 } };
+            var obstacles = new[] { new Point { X = 0, Y = 0 } };
             var planet = new Planet(2, 2, obstacles);
             var rover = new Rover(planet, 0, 2);
             rover.Move("B");
@@ -335,7 +335,7 @@ namespace PerseveranceUnitTests
         [Test]
         public void RoverCantMoveRightThroughObstacle()
         {
-            var obstacles = new[] { new Obstacle { X = 2, Y = 0 } };
+            var obstacles = new[] { new Point { X = 2, Y = 0 } };
             var planet = new Planet(2, 2, obstacles);
             var rover = new Rover(planet, 0, 0);
             rover.Move("R");
@@ -362,7 +362,7 @@ namespace PerseveranceUnitTests
         [Test]
         public void RoverCantMoveLeftThroughObstacle()
         {
-            var obstacles = new[] { new Obstacle { X = 0, Y = 0 } };
+            var obstacles = new[] { new Point { X = 0, Y = 0 } };
             var planet = new Planet(2, 2, obstacles);
             var rover = new Rover(planet, 2, 0);
             rover.Move("L");
@@ -403,7 +403,7 @@ namespace PerseveranceUnitTests
         [Test]
         public void RoverShouldNotLandOverObstaclePlanetOtherwiseExplodes([Range(0, 2)] byte x, [Range(0, 2)] byte y)
         {
-            var obstacles = new[] { new Obstacle { X = 1, Y = 1 } };
+            var obstacles = new[] { new Point { X = 1, Y = 1 } };
             var planet = new Planet(2, 2, obstacles);
 
             // rover 1 explodes
