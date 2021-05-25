@@ -6,7 +6,7 @@ namespace Perseverance
     /// planet is the surface where rover move
     ///  - has a certain initial dimension (x,y)
     /// </summary>
-    public struct Planet
+    public readonly struct Planet
     {
         public byte H { get; }
         public byte W { get; }
@@ -43,24 +43,22 @@ namespace Perseverance
 
         public Point? TryMove(byte Y, byte X, byte targetY, byte targetX)
         {
-            Console.WriteLine($"X {X} target {targetX} {targetX == byte.MaxValue} {W}");
             // wrap corrections
             if (targetX == byte.MaxValue)
                 targetX = W;
             if (targetY == byte.MaxValue)
                 targetY = H;
-            
+
             if (targetX > W)
                 targetX = 0;
             if (targetY > H)
                 targetY = 0;
-            
-            Console.WriteLine($"FIXED X {X} target {targetX}");
 
             // obstacles
             if (Map[targetY, targetX].HasValue)
-                    return null;
+                return null;
 
+            // set rover position
             Map[Y, X] = null;
             Map[targetY, targetX] = true;
 
