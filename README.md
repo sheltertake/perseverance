@@ -1,5 +1,65 @@
 # Perseverance POC
 
+## 05 - Demo
+
+ - [Demo](https://perseverance.azurewebsites.net/)
+
+![demo](./docs/demo.png)
+ - the black box is the rover
+ - the red boxes are the obstacles
+ - the top bar exposes
+   - width of the planet (max 255 not checked)
+   - height of the planet
+   - position of the rover (x/y)
+   - number of obstacles (the position of the obstacles are randomized)
+   - the ui should be reactive and restart at each change (no throttle logic have been implemented)
+ - to move the rover use arrows (focus the tab before)
+ - no buffer has been implemented in the client so each key press trigger moves.
+ - event.KeyCode has been deprecated in favor of a strange literal enum. I translated in the SPA the string of the key pressed in the original "F" "B" "R" "L" char codes selected at the beginning.
+ - during the interaction I noticed a big mistake in the library not emerged during unit tests. I tested the code using a 3x3 grid. If I used a 3x4 or a 4x3 matrix I noticed the mistake. The error was the order of the indexes in the boolean matrix bools[,]. The first index is the Y and not the X. Moving the rover in the UI I noticed the mistake.
+ - I refactored the moves methods splitting the responsibilities between rover and planet (planet check if rover can and update his map, rover update his state if possible)
+
+
+### 05.1 Known issues
+ 
+ - Focus
+ - Flex grid doesn't fit the screen. I'm weak in css.
+ - Angular app is not optimized at all. The view model is heavy and the view re-render all cells each time model is updated. 
+   - I should update only the x/y position of the rover
+   - I wanted to use ngrx but I cut it
+ - There is a sound when the rover moves against an obstacle. Sound doesn't work always. It's first time I use it. I don't know why sometimes the sound is not reproduced.
+ - The top bar is did via bootstrap 5. Ridiculous introduce this dependency for the top bar but I'm very rusty with css.
+ - I wanted to try signalr integration tests but I faced issues. Connection in memory fails. I tested the backend in integration invoking mediatr commands.
+
+
+### 05.2 Tech stuff
+
+ - The application is published on azure inside a docker container. No build pipeline at the moment.
+
+```cmd
+docker build -t maxbnet/perseverance:latest .
+docker push maxbnet/perseverance:latest
+```
+
+ - The SPA use only websockets
+ - The Backend doesn't use async await. Never.
+ - The application is built with these major layers
+   - Angular 12 very simple SPA 
+     - served via ng in the localhost and proxy via dotnet spa middleware
+     - via static files middleware in the demo environment
+     - @microsoft/signalr client (all communications between spa and proxy pass via websocket)
+
+   - Dotnet 5 API with these libraries
+     - signalr hub
+       - 2 methods (land, move) are invoked from the SPA and trigger 2 mediatr events  
+       - 1 method is a push notification and is invoked from mediatr handler
+     - mediatr
+       - 3 handlers one per command type.
+     - services
+       - perseverance service is the proxy service responsible to consume perseverance library in process (in the real world should be out of process/planet :))
+       - perseverance state/cache service is a singleton and persist the state of the rover 
+
+
 ## 04 - MVP
 
 ### 04.1 - MVP Architecture
