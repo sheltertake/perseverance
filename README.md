@@ -59,6 +59,134 @@ docker push maxbnet/perseverance:latest
        - perseverance service is the proxy service responsible to consume perseverance library in process (in the real world should be out of process/planet :))
        - perseverance state/cache service is a singleton and persist the state of the rover 
 
+### 05.3 Interesting snippets
+
+ - signalr hub doesn't wait.
+ - via continueWith I trigger a a new command that init a new flow that produce at the end a push notification in the SPA
+  
+
+```csharp
+
+  public Task Handle(LandCommand notification, CancellationToken cancellationToken)
+  {
+      return _roverService.LandAsync(notification.Options).ContinueWith(x =>
+      {
+          _mediator.Publish(new StateEvent(notification.ConnectionId, x.Result), cancellationToken);
+      }, cancellationToken);
+  }
+
+```
+
+ - signalr hub uses "typed client" technique in order to avoid magic string
+ - interfaces are split in two
+   - the Invoke interface segregate the part of the hub api invoked from SPA
+   - the Push notification identify the methods invoked from dotnet
+
+ - I found this "trick" in a blog post and I liked.
+
+
+```csharp
+public interface IPushNotificationHubClient
+{
+    Task StateResponseAsync(PerseveranceState state);
+}
+public interface IInvokeNotificationHubClient
+{
+    Task LandRequestAsync(LandOptions options);
+    Task MoveRequestAsync(Guid guid, string command);
+}
+public class NotificationHub : Hub<IPushNotificationHubClient>, IInvokeNotificationHubClient
+{
+```
+
+ - the 4 moves methods implemented during the TDD phase has been compacted in this Planet method
+ - I used the Map[,] of bool to check if a coords was free or not.
+ - I modified the Map using bool? to save also the rover (true) and using false for obstacles. Free cells are now null and not false like previously.
+ - If a rover is in position 0 and move back/left --byte = 255. I didn't know this. So in order to wrap I have to check MaxValue. I don't like... I chosen byte to avoid negative number, but I should use unsigned int.
+
+```csharp
+public Point? TryMove(byte Y, byte X, byte targetY, byte targetX)
+{
+    // wrap corrections
+    if (targetX == byte.MaxValue)
+        targetX = W;
+    if (targetY == byte.MaxValue)
+        targetY = H;
+
+    if (targetX > W)
+        targetX = 0;
+    if (targetY > H)
+        targetY = 0;
+
+    // obstacles
+    if (Map[targetY, targetX].HasValue)
+        return null;
+
+    // set rover position
+    Map[Y, X] = null;
+    Map[targetY, targetX] = true;
+
+    return new Point()
+    {
+        Y = targetY,
+        X = targetX
+    };
+}
+```
+ 
+ - I never used nunit [Range] attribute. Smart for these type of tests
+
+```csharp
+/// <summary>
+/// Rover should land on planet
+/// </summary>
+/// <remarks>
+/// land attempts: 
+///   *   *   *
+/// |   |   |   | *
+/// |   |   |   | *
+/// |   |   |   | *
+/// </remarks>
+[Test]
+public void RoverShouldLandInPlanetOtherwiseExplodes([Range(0, 2)] byte inbound)
+{
+    var planet = new Planet(2, 2);
+    Action attemptLandYOverflow = () => _ = new Rover(planet, inbound, 3);
+    attemptLandYOverflow.Should().Throw<ArgumentException>();
+    Action attemptLandXOverflow = () => _ = new Rover(planet, 3, inbound);
+    attemptLandXOverflow.Should().Throw<ArgumentException>();
+}
+
+/// <summary>
+/// Rover should not land over obstacle
+/// </summary>
+/// <remarks>
+/// land attempts: 
+/// | R | R | R | 
+/// | R | O | R | 
+/// | R | R | R | 
+/// </remarks>
+[Test]
+public void RoverShouldNotLandOverObstaclePlanetOtherwiseExplodes([Range(0, 2)] byte x, [Range(0, 2)] byte y)
+{
+    var obstacles = new[] { new Point { X = 1, Y = 1 } };
+    var planet = new Planet(2, 2, obstacles);
+
+    // rover 1 explodes
+    if (x == 1 && y == 1)
+    {
+        Action attemptLandOverObstacle = () => _ = new Rover(planet, x, y);
+        attemptLandOverObstacle.Should().Throw<ArgumentException>();
+    }
+    else
+    {
+        // rover 2 not
+        var rover = new Rover(planet, x, y);
+        rover.X.Should().Be(x);
+        rover.Y.Should().Be(y);
+    }
+}
+```
 
 ## 04 - MVP
 
