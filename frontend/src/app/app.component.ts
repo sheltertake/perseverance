@@ -1,5 +1,5 @@
-import { Component, HostListener, Injectable, Pipe, PipeTransform } from '@angular/core';
-import { Observable, of, Subscription } from 'rxjs';
+import { Component, HostListener, Pipe, PipeTransform } from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
 import { SignalRService } from './services/signal-r.service';
 import { SimpleStateService } from './services/simple-state.service';
 
@@ -14,21 +14,35 @@ export interface IState
   map: boolean[][],
   guid: string
 }
-// public class PerseveranceState
-//     {
-//         public byte X { get; init; }
-//         public byte Y { get; init; }
-//         public bool?[,] Map { get; init; }
-//         public byte W { get; init; }
-//         public byte H { get; init; }
-//         public ICollection<Obstacle> Obstacles { get; set; }
-//         public Guid Guid { get; internal set; }
-//     }
+export interface Options
+{
+  H: number,
+  W: number,
+  X: number,
+  Y: number,
+  O: number,
+}
 @Component({
   selector: 'app-root',
   template: `
     <!-- <pre>{{state$ | async | json}}</pre> -->
-
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Rover Test</a>
+        <form class="d-flex">
+          <span class="input-group-text">W</span>
+          <input class="form-control me-1" type="number" name="W" [(ngModel)]="options.W" (ngModelChange)="restart()">
+          <span class="input-group-text">H</span>
+          <input class="form-control me-1" type="number" name="H" [(ngModel)]="options.H">
+          <span class="input-group-text">X</span>
+          <input class="form-control me-1" type="number" name="X" [(ngModel)]="options.X">
+          <span class="input-group-text">Y</span>
+          <input class="form-control me-1" type="number" name="Y" [(ngModel)]="options.Y">
+          <span class="input-group-text">O</span>
+          <input class="form-control me-1" type="number" name="O" [(ngModel)]="options.O">
+        </form>
+      </div>
+    </nav>
       <div class="flex-container" *ngFor="let row of (state$ | async)?.map;">
         <div class="flex-item" *ngFor="let cell of row;" [style.background-color]="cell | trisColor">
         </div>
@@ -36,7 +50,6 @@ export interface IState
 
   `,
   styles: [`
-    /* https://stackoverflow.com/questions/29307971/css-grid-of-squares-with-flexbox */
     .flex-container {
         padding: 0;
         margin: 0;
@@ -52,6 +65,7 @@ export interface IState
         color: white;
         flex: 1 0 auto;
         height:auto;
+        border:1px dashed #fff;
     }
     .flex-item:before {
         content:'';
@@ -65,6 +79,13 @@ export class AppComponent {
   state$!: Observable<IState>;
   state!: IState;
   sub!: Subscription;
+  options: Options = {
+    H: 10,
+    W: 10,
+    X: 0,
+    Y: 0,
+    O: 25
+  }; 
 
   constructor(
     private signalRService: SignalRService,
@@ -72,7 +93,7 @@ export class AppComponent {
   ) { }
 
   ngOnInit() {
-    this.signalRService.startConnection();
+    this.signalRService.startConnection(this.options);
     this.signalRService.registerOnServerEvents();
 
     this.state$ = this.simpleStateService.state$;
@@ -95,6 +116,10 @@ export class AppComponent {
       event.stopPropagation();
       this.signalRService.MoveRequestAsync(this.state.guid, command);
     }
+  }
+
+  restart(){
+    this.signalRService.LandRequestAsync(this.options);
   }
 
   toCommand(event: KeyboardEvent) : string | undefined {

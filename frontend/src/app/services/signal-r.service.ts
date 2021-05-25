@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as signalR from "@microsoft/signalr";
-import { IState } from '../app.component';
+import { IState, Options } from '../app.component';
 import { SimpleStateService } from './simple-state.service';
-// import { MessagePackHubProtocol } from '@microsoft/signalr-protocol-msgpack';
 
 @Injectable({
   providedIn: 'root'
@@ -10,11 +9,11 @@ import { SimpleStateService } from './simple-state.service';
 export class SignalRService {
 
   constructor(private simpleStateService: SimpleStateService) {
-      
+
   }
   private hubConnection!: signalR.HubConnection;
-  private counter = 0;
-  public startConnection = () => {
+  
+  public startConnection = (options: Options) => {
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl('http://localhost:5000/notifications')
       .configureLogging(signalR.LogLevel.Information)
@@ -22,13 +21,18 @@ export class SignalRService {
     this.hubConnection
       .start()
       .then(() => {
-        console.log('Invoke LandRequestAsync');
-        this.hubConnection.invoke('LandRequestAsync');
+
+        this.LandRequestAsync(options);
       })
       .catch(err => console.log('Error while starting connection: ' + err))
   }
   public MoveRequestAsync(guid: string, command: string) {
     this.hubConnection.invoke('MoveRequestAsync', guid, command);
+  }
+
+  public LandRequestAsync(options: Options) {
+    console.log('Invoke LandRequestAsync', options);
+    this.hubConnection.invoke('LandRequestAsync', options);
   }
   public registerOnServerEvents() {
 

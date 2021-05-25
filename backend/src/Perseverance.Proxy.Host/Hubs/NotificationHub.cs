@@ -13,7 +13,7 @@ namespace Perseverance.Proxy.Host.Hubs
     }
     public interface IInvokeNotificationHubClient
     {
-        Task LandRequestAsync();
+        Task LandRequestAsync(LandOptions options);
         Task MoveRequestAsync(Guid guid, string command);
     }
     public class NotificationHub : Hub<IPushNotificationHubClient>, IInvokeNotificationHubClient
@@ -29,9 +29,9 @@ namespace Perseverance.Proxy.Host.Hubs
             _logger = logger;
         }
 
-        public Task LandRequestAsync()
+        public Task LandRequestAsync(LandOptions options)
         {
-            return _mediator.Publish(new LandCommand(Context.ConnectionId));
+            return _mediator.Publish(new LandCommand(Context.ConnectionId, options));
         }
 
         public Task MoveRequestAsync(Guid guid, string command)

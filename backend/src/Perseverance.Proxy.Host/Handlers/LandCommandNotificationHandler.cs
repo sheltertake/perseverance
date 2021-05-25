@@ -27,7 +27,7 @@ namespace Perseverance.Proxy.Host.Handlers
         {
             _logger.LogInformation("LandCommandNotificationHandler - {notificationConnectionId}", notification.ConnectionId);
 
-            return _roverService.LandAsync().ContinueWith(x =>
+            return _roverService.LandAsync(notification.Options).ContinueWith(x =>
             {
                 _mediator.Publish(new StateEvent(notification.ConnectionId, x.Result), cancellationToken);
             }, cancellationToken);

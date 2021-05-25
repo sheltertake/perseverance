@@ -8,7 +8,7 @@ namespace Perseverance.Proxy.Host.Services
 {
     public interface IPerseveranceService
     {
-        Task<PerseveranceState> LandAsync();
+        Task<PerseveranceState> LandAsync(LandOptions options);
         Task<PerseveranceState> MoveAsync(Guid guid, string command);
     }
 
@@ -24,20 +24,21 @@ namespace Perseverance.Proxy.Host.Services
             _stateService = stateService;
             _logger = logger;
         }
-        public Task<PerseveranceState> LandAsync()
+        public Task<PerseveranceState> LandAsync(LandOptions options)
         {
             var state = RoverFactory.Create(
-                    x: 1,
-                    y: 1,
-                    w: 3,
-                    h: 3,
-                    obstacles: new[]
-                    {
-                        new Point{ X = 0, Y = 0},
-                        new Point{ X = 2, Y = 2},
-                        new Point{ X = 0, Y = 2},
-                        new Point{ X = 2, Y = 0}
-                    }
+                    x: options.X,
+                    y: options.Y,
+                    w: options.W,
+                    h: options.H,
+                    obstacles: options.RandomObstacles()
+                    //obstacles: new[]
+                    //{
+                    //    new Point{ X = 0, Y = 0},
+                    //    new Point{ X = 2, Y = 2},
+                    //    new Point{ X = 0, Y = 2},
+                    //    new Point{ X = 2, Y = 0}
+                    //}
                     )
                 .ToState(Guid.NewGuid());
 
