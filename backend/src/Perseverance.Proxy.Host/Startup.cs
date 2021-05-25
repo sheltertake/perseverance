@@ -40,6 +40,8 @@ namespace Perseverance.Proxy.Host
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseStaticFiles();
+
             app.UseSerilogRequestLogging();
             
             app.UseRouting();

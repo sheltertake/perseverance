@@ -12,13 +12,11 @@ namespace Perseverance.Proxy.Host
     [ExcludeFromCodeCoverage]
     public static class Program
     {
+
         public static void Main(string[] args)
         {
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                .Enrich.FromLogContext()
-                .WriteTo.Console()
-                .CreateLogger();
+            
+            Log.Logger = LoggerConfiguration.CreateLogger();
 
             try
             {
@@ -35,6 +33,8 @@ namespace Perseverance.Proxy.Host
             }
         }
 
+        private static LoggerConfiguration LoggerConfiguration => new LoggerConfiguration().Enrich.FromLogContext().WriteTo.Console();
+
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
@@ -50,6 +50,9 @@ namespace Perseverance.Proxy.Host
                         .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
                         .AddEnvironmentVariables()
                         .SetBasePath(Directory.GetCurrentDirectory());
+
+                    Log.Logger = LoggerConfiguration.ReadFrom.Configuration(config.Build()).CreateLogger();
+
                 });
     }
 }

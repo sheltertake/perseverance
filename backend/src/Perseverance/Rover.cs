@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Perseverance
 {
@@ -27,14 +28,15 @@ namespace Perseverance
             if (planet.H < y)
                 throw new ArgumentException(nameof(y));
 
-            if (planet[x, y].HasValue)
+            if (planet[y, x].HasValue)
                 throw new ArgumentException(nameof(planet));
 
-            planet.Land(x,y);
 
             Planet = planet;
             X = x;
             Y = y;
+
+            Planet.Map[Y, X] = true;
         }
 
         public Rover Move(string input)
@@ -72,15 +74,15 @@ namespace Perseverance
                 target = 0;
             }
 
-            if (Planet[X, target].HasValue)
+            Console.WriteLine($"Y from {Y} to {target}");
+            if (Planet[target,X].HasValue)
                 return false;
 
-            Planet.Map[X, Y] = null;
-            Planet.Map[X, target] = true;
-
+            Planet.Map[Y, X] = null;
+            Planet.Map[target, X] = true;
             Y = target;
 
-           
+
 
             return true;
         }
@@ -96,13 +98,14 @@ namespace Perseverance
             {
                 target = 0;
             }
-
-            if (Planet[target, Y].HasValue)
+            Console.WriteLine($"X from {X} to {target}");
+            if (Planet[Y, target].HasValue)
                 return false;
 
 
-            Planet.Map[X, Y] = null;
-            Planet.Map[target, Y] = true;
+            Planet.Map[Y, X] = null;
+            Planet.Map[Y, target] = true;
+
 
             X = target;
 
@@ -122,18 +125,18 @@ namespace Perseverance
                 target = Planet.W;
             }
 
-            if (Planet[target, Y].HasValue)
+            Console.WriteLine($"X from {X} to {target}");
+            if (Planet[Y, target].HasValue)
                 return false;
 
 
-            Planet.Map[X, Y] = null;
-            Planet.Map[target, Y] = true;
+            Planet.Map[Y, X] = null;
+            Planet.Map[Y, target] = true;
 
             X = target;
 
             return true;
         }
-
         private bool Backward()
         {
             var target = Y;
@@ -147,12 +150,12 @@ namespace Perseverance
                 target = Planet.H;
             }
 
-            if (Planet[X, target].HasValue)
+            Console.WriteLine($"Y from {Y} to {target}");
+            if (Planet[target, X].HasValue)
                 return false;
-
-
-            Planet.Map[X, Y] = null;
-            Planet.Map[X, target] = true;
+            
+            Planet.Map[Y, X] = null;
+            Planet.Map[target,X] = true;
 
             Y = target;
 
@@ -171,32 +174,32 @@ namespace Perseverance
         public static Rover Create(
             byte x = 1,
             byte y = 1,
-            byte planetHeight = 3,
-            byte planetWidth = 3,
+            byte w = 3,
+            byte h = 3,
             Obstacle[] obstacles = null
         )
         {
             return new Rover(
                 planet: new Planet(
-                    h: --planetHeight,
-                    w: --planetWidth,
+                    w: --w,
+                    h: --h,
                     obstacles: obstacles
                 ),
                 x: x,
                 y: y);
         }
 
-        public static string ToCommand(this string keyboardEventCode)
-        {
-            return keyboardEventCode switch
-            {
-                "ArrowRight" => "R",
-                "ArrowLeft" => "L",
-                "ArrowUp" => "F",
-                "ArrowDown" => "B",
-                _ => ""
-            };
-        }
+        //public static string ToCommand(this string keyboardEventCode)
+        //{
+        //    return keyboardEventCode switch
+        //    {
+        //        "ArrowRight" => "R",
+        //        "ArrowLeft" => "L",
+        //        "ArrowUp" => "F",
+        //        "ArrowDown" => "B",
+        //        _ => ""
+        //    };
+        //}
 
         //private static class Commands
         //{

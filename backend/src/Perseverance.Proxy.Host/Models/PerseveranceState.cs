@@ -32,7 +32,7 @@ namespace Perseverance.Proxy.Host.Models
         }
         public static Rover ToRover(this PerseveranceState state)
         {
-            var planet = new Planet(h: state.H, w: state.W, obstacles: state.Obstacles.ToArray());
+            var planet = new Planet(h: state.H, w: state.W, obstacles: state.Obstacles?.ToArray());
             var rover = new Rover(x: state.X, y: state.Y, planet: planet);
             return rover;
         }

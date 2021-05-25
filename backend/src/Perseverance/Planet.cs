@@ -15,29 +15,23 @@ namespace Perseverance
 
         public Obstacle[] Obstacles { get; }
 
-        public bool? this[byte x, byte y] => Map[x, y];
+        public bool? this[byte y, byte x] => Map[y, x];
 
-        public Planet(byte h, byte w, Obstacle[] obstacles = null)
+        public Planet(byte w, byte h, Obstacle[] obstacles = null)
         {
-            H = h;
             W = w;
+            H = h;
             Obstacles = obstacles;
 
-            Map = new bool?[w + 1, h + 1];
+            Map = new bool?[h + 1, w + 1];
 
             if (obstacles == null) return;
 
             foreach (var obstacle in obstacles)
             {
-                Map[obstacle.X, obstacle.Y] = false;
+                Map[obstacle.Y, obstacle.X] = false;
             }
         }
-
-        public void Land(byte x, byte y)
-        {
-            Map[x, y] = true;
-        }
-
         
     }
 }

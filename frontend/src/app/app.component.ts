@@ -29,8 +29,11 @@ export interface IState
   template: `
     <!-- <pre>{{state$ | async | json}}</pre> -->
     <div class="container">
-      <div class="row" *ngFor="let row of (state$ | async)?.map">
-        <div class="square" *ngFor="let cell of row">{{cell | tris}}</div>
+      <div class="row" *ngFor="let row of (state$ | async)?.map; index as y;">
+        <div class="square" *ngFor="let cell of row; index as x;">
+          <sub>y: {{y}} x: {{x}}</sub>
+          {{cell | tris}}
+        </div>
       </div>
     </div>    
   `,
@@ -72,14 +75,28 @@ export class AppComponent {
   @HostListener('window:keyup', ['$event'])
   keyEvent(event: KeyboardEvent) {
     console.log(event, String.fromCharCode(event.keyCode));
-
-    if (event.key === KEY_CODE.ARROW_RIGHT ||
-      event.key === KEY_CODE.ARROW_LEFT ||
-      event.key === KEY_CODE.ARROW_UP ||
-      event.key === KEY_CODE.ARROW_DOWN) {
+    const command = this.toCommand(event);
+    if (command) {
       // this.map$ = this.simpleService.Get(true);
-      this.signalRService.MoveRequestAsync(this.state.guid, event.key);
+      this.signalRService.MoveRequestAsync(this.state.guid, command);
     }
+  }
+
+  toCommand(event: KeyboardEvent) : string | undefined {
+    switch(event.key){
+      case KEY_CODE.ARROW_RIGHT:
+        return 'R';
+        
+      case KEY_CODE.ARROW_LEFT:
+        return 'L';
+        
+      case KEY_CODE.ARROW_UP:
+        return 'B';
+        
+      case KEY_CODE.ARROW_DOWN:
+        return 'F';
+    }
+    return undefined;
   }
 }
 @Pipe({ name: 'tris' })
