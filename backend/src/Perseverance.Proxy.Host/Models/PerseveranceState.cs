@@ -13,6 +13,7 @@ namespace Perseverance.Proxy.Host.Models
         public byte H { get; init; }
         public ICollection<Point> Obstacles { get; set; }
         public Guid Guid { get; internal set; }
+        public bool IsInError { get; init; }
     }
 
     public static class PerseveranceStateExtensions
@@ -27,7 +28,8 @@ namespace Perseverance.Proxy.Host.Models
                 H = rover.Planet.H,
                 W = rover.Planet.W,
                 Map = rover.Planet.Map,
-                Obstacles = rover.Planet.Obstacles
+                Obstacles = rover.Planet.Obstacles,
+                IsInError = rover.IsInError
             };
         }
         public static Rover ToRover(this PerseveranceState state)

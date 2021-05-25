@@ -57,7 +57,7 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": ["node_modules/ion-sound/js/ion.sound.min.js"]
           },
           "configurations": {
             "production": {

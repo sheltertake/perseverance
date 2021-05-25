@@ -1,9 +1,11 @@
-﻿using FluentAssertions;
+﻿using System.Diagnostics.CodeAnalysis;
+using FluentAssertions;
 using NUnit.Framework;
 using Perseverance.Proxy.Host.Models;
 
 namespace Perseverance.Proxy.Host.UnitTests
 {
+    [ExcludeFromCodeCoverage]
     class LandOptionsTest
     {
         [Test]

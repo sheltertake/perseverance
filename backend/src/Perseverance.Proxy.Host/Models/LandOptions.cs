@@ -15,6 +15,11 @@ namespace Perseverance.Proxy.Host.Models
 
     public static class LandOptionsExtensions
     {
+        /// <summary>
+        /// super quick and dirty function to extract random obstacles given H/W and rover X/Y
+        /// </summary>
+        /// <param name="options"></param>
+        /// <returns></returns>
         public static Point[] RandomObstacles(this LandOptions options)
         {
             if (options.O <= 0)

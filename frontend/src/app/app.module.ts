@@ -2,11 +2,10 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 
-import { AppComponent, TrisColorPipe, TrisPipe } from './app.component';
+import { AppComponent, TrisColorPipe } from './app.component';
 
 @NgModule({
   declarations: [
-    TrisPipe,
     TrisColorPipe,
     AppComponent
   ],

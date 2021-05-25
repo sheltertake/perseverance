@@ -3,25 +3,6 @@ import { Observable, Subscription } from 'rxjs';
 import { SignalRService } from './services/signal-r.service';
 import { SimpleStateService } from './services/simple-state.service';
 
-enum KEY_CODE {
-  ARROW_RIGHT = 'ArrowRight',
-  ARROW_LEFT = 'ArrowLeft',
-  ARROW_UP = 'ArrowUp',
-  ARROW_DOWN = 'ArrowDown',
-}
-export interface IState
-{
-  map: boolean[][],
-  guid: string
-}
-export interface Options
-{
-  H: number,
-  W: number,
-  X: number,
-  Y: number,
-  O: number,
-}
 @Component({
   selector: 'app-root',
   template: `
@@ -85,7 +66,7 @@ export class AppComponent {
     X: 0,
     Y: 0,
     O: 25
-  }; 
+  };
 
   constructor(
     private signalRService: SignalRService,
@@ -97,17 +78,37 @@ export class AppComponent {
     this.signalRService.registerOnServerEvents();
 
     this.state$ = this.simpleStateService.state$;
-    this.sub = this.simpleStateService.state$.subscribe(x =>{
+    this.sub = this.simpleStateService.state$.subscribe(x => {
       this.state = x;
+      console.log('isInError', this.state.isInError);
+      if (this.state.isInError) {
+        setTimeout(() => {
+          (window as any).ion.sound.play("metal_plate");
+        }, 100);
+      }
     });
+
+
+    (window as any).ion.sound({
+      sounds: [
+        {
+          name: "metal_plate",
+          multiplay: false,
+          preload: true
+        }
+      ],
+      volume: 0.5,
+      path: "assets/sounds/"
+    });
+
   }
 
   ngOnDestroy(): void {
-    if(this.sub){
+    if (this.sub) {
       this.sub.unsubscribe();
     }
   }
-  
+
   @HostListener('window:keyup', ['$event'])
   keyEvent(event: KeyboardEvent) {
     console.log(event, String.fromCharCode(event.keyCode));
@@ -118,38 +119,52 @@ export class AppComponent {
     }
   }
 
-  restart(){
+  restart() {
     this.signalRService.LandRequestAsync(this.options);
   }
 
-  toCommand(event: KeyboardEvent) : string | undefined {
-    switch(event.key){
+  toCommand(event: KeyboardEvent): string | undefined {
+    switch (event.key) {
       case KEY_CODE.ARROW_RIGHT:
         return 'R';
-        
+
       case KEY_CODE.ARROW_LEFT:
         return 'L';
-        
+
       case KEY_CODE.ARROW_UP:
         return 'B';
-        
+
       case KEY_CODE.ARROW_DOWN:
         return 'F';
     }
     return undefined;
   }
 }
-@Pipe({ name: 'tris' })
-export class TrisPipe implements PipeTransform {
-  transform(value: boolean | null): string {
-    return value === true ? "O" :
-      value === false ? "X" : "";
-  }
-}
+
 @Pipe({ name: 'trisColor' })
 export class TrisColorPipe implements PipeTransform {
   transform(value: boolean | null): string {
     return value === true ? "black" :
       value === false ? "red" : "white";
   }
+}
+
+
+enum KEY_CODE {
+  ARROW_RIGHT = 'ArrowRight',
+  ARROW_LEFT = 'ArrowLeft',
+  ARROW_UP = 'ArrowUp',
+  ARROW_DOWN = 'ArrowDown',
+}
+export interface IState {
+  map: boolean[][],
+  guid: string,
+  isInError: boolean
+}
+export interface Options {
+  H: number,
+  W: number,
+  X: number,
+  Y: number,
+  O: number,
 }

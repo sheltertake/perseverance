@@ -15,6 +15,7 @@ namespace Perseverance
         public byte X { get; private set; }
         public byte Y { get; private set; }
         public Planet Planet { get; }
+        public bool IsInError { get; private set; }
 
 
         public Rover(
@@ -39,7 +40,10 @@ namespace Perseverance
             foreach (var c in input.ToUpper())
             {
                 if (!Next(c))
+                {
+                    IsInError = true;
                     break;
+                }
             }
 
             return this;
