@@ -30,7 +30,9 @@
  - There is a sound when the rover moves against an obstacle. Sound doesn't work always. It's first time I use it. I don't know why sometimes the sound is not reproduced.
  - The top bar is did via bootstrap 5. Ridiculous introduce this dependency for the top bar but I'm very rusty with css.
  - I wanted to try signalr integration tests but I faced issues. Connection in memory fails. I tested the backend in integration invoking mediatr commands.
+ - [Web Sockets. Web Sockets are supported on Linux apps.](https://github.com/MicrosoftDocs/azure-docs/blob/master/articles/app-service/faq-app-service-linux.md)
 
+[!IMPORTANT] Web Sockets are not currently supported for Linux apps on Free App Service Plans. We are working on removing this limitation and plan to support up to 5 web socket connections on Free App Service plans.
 
 ### 05.2 Tech stuff
 

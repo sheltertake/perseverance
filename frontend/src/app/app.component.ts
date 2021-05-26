@@ -9,7 +9,7 @@ import { SimpleStateService } from './services/simple-state.service';
     <!-- <pre>{{state$ | async | json}}</pre> -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#">Rover Test</a>
+        <a class="navbar-brand" href="#">Rover - Press arrows</a>
         <form class="d-flex">
           <span class="input-group-text">W</span>
           <input class="form-control me-1" type="number" name="W" [(ngModel)]="options.W" (ngModelChange)="restart()">
@@ -24,13 +24,16 @@ import { SimpleStateService } from './services/simple-state.service';
         </form>
       </div>
     </nav>
+    <main>
       <div class="flex-container" *ngFor="let row of (state$ | async)?.map;">
         <div class="flex-item" *ngFor="let cell of row;" [style.background-color]="cell | trisColor">
         </div>
       </div>
-
+    </main>
   `,
   styles: [`
+    .navbar { position:fixed; width:100%; }
+    main{ height: 100vh;  }
     .flex-container {
         padding: 0;
         margin: 0;
@@ -61,11 +64,11 @@ export class AppComponent {
   state!: IState;
   sub!: Subscription;
   options: Options = {
-    H: 10,
-    W: 10,
+    H: 5,
+    W: 5,
     X: 0,
     Y: 0,
-    O: 25
+    O: 5
   };
 
   constructor(
