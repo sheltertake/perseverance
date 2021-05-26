@@ -14,13 +14,13 @@ import { SimpleStateService } from './services/simple-state.service';
           <span class="input-group-text">W</span>
           <input class="form-control me-1" type="number" name="W" [(ngModel)]="options.W" (ngModelChange)="restart()">
           <span class="input-group-text">H</span>
-          <input class="form-control me-1" type="number" name="H" [(ngModel)]="options.H">
+          <input class="form-control me-1" type="number" name="H" [(ngModel)]="options.H" (ngModelChange)="restart()">
           <span class="input-group-text">X</span>
-          <input class="form-control me-1" type="number" name="X" [(ngModel)]="options.X">
+          <input class="form-control me-1" type="number" name="X" [(ngModel)]="options.X" (ngModelChange)="restart()">
           <span class="input-group-text">Y</span>
-          <input class="form-control me-1" type="number" name="Y" [(ngModel)]="options.Y">
+          <input class="form-control me-1" type="number" name="Y" [(ngModel)]="options.Y" (ngModelChange)="restart()">
           <span class="input-group-text">O</span>
-          <input class="form-control me-1" type="number" name="O" [(ngModel)]="options.O">
+          <input class="form-control me-1" type="number" name="O" [(ngModel)]="options.O" (ngModelChange)="restart()">
         </form>
       </div>
     </nav>
