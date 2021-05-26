@@ -28,7 +28,7 @@ namespace Perseverance.Proxy.Host.Services
 
         public Task SetAsync(Guid guid, PerseveranceState state, CancellationToken cancellationToken)
         {
-            var options = new DistributedCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(1));
+            var options = new DistributedCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(5));
             return _distributedCache.SetStringAsync(guid.ToString(), JsonConvert.SerializeObject(state), options, cancellationToken);
         }
         

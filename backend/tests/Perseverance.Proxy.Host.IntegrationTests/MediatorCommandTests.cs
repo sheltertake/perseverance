@@ -24,6 +24,8 @@ namespace Perseverance.Proxy.Host.IntegrationTests
         [Test]
         public async Task ServerShouldReactCommands()
         {
+            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "development");
+
             var configuration = new ConfigurationBuilder().Build();
 
             var hostBuilder = new HostBuilder()
