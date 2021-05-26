@@ -1,15 +1,15 @@
 ﻿using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Perseverance.Proxy.Host.Models;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Perseverance.Proxy.Host.Services
 {
     public interface IPerseveranceService
     {
-        Task<PerseveranceState> LandAsync(LandOptions options);
-        Task<PerseveranceState> MoveAsync(Guid guid, string command);
+        Task<PerseveranceState> LandAsync(LandOptions options, CancellationToken cancellationToken);
+        Task<PerseveranceState> MoveAsync(Guid guid, string command, CancellationToken cancellationToken);
     }
 
     public class PerseveranceService : IPerseveranceService
@@ -24,8 +24,9 @@ namespace Perseverance.Proxy.Host.Services
             _stateService = stateService;
             _logger = logger;
         }
-        public Task<PerseveranceState> LandAsync(LandOptions options)
+        public async Task<PerseveranceState> LandAsync(LandOptions options, CancellationToken cancellationToken)
         {
+            var guid = options.Guid ?? Guid.NewGuid();
             var state = RoverFactory.Create(
                     x: options.X,
                     y: options.Y,
@@ -33,18 +34,18 @@ namespace Perseverance.Proxy.Host.Services
                     h: options.H,
                     obstacles: options.RandomObstacles()
                     )
-                .ToState(Guid.NewGuid());
+                .ToState(guid);
 
-            _stateService.Cache.TryAdd(state.Guid, state);
+            await _stateService.SetAsync(state.Guid, state, cancellationToken);
 
-            return Task.FromResult(state);
+            return state;
         }
 
-        public Task<PerseveranceState> MoveAsync(Guid guid, string command)
+        public async Task<PerseveranceState> MoveAsync(Guid guid, string command, CancellationToken cancellationToken)
         {
             _logger.LogInformation("MoveAsync {command}", command);
 
-            var cache = _stateService.Cache[guid];
+            var cache = await _stateService.GetStateAsync(guid, cancellationToken);
 
             var rover = cache
                         .ToRover()
@@ -52,9 +53,9 @@ namespace Perseverance.Proxy.Host.Services
 
             var state = rover.ToState(guid);
 
-            _stateService.Cache[guid] = state;
+            await _stateService.SetAsync(guid, state, cancellationToken);
 
-            return Task.FromResult(state);
+            return state;
         }
     }
 }

@@ -6,6 +6,7 @@ namespace Perseverance.Proxy.Host.Models
 {
     public class LandOptions
     {
+        public Guid? Guid { get; set; }
         public byte H { get; set; } = 3;
         public byte W { get; set; } = 3;
         public byte X { get; set; } = 1;

@@ -1,4 +1,3 @@
-using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
@@ -8,12 +7,13 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Perseverance.Proxy.Host.Models;
-using Perseverance.Proxy.Host.Services;
 using Serilog;
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
+using Perseverance.Proxy.Host.Services;
 
 namespace Perseverance.Proxy.Host.IntegrationTests
 {
@@ -42,15 +42,26 @@ namespace Perseverance.Proxy.Host.IntegrationTests
             var testServer = host.GetTestServer();
 
             var mediator = testServer.Services.GetRequiredService<IMediator>();
+            var state = testServer.Services.GetRequiredService<IPerseveranceStateService>();
 
             var connectionId = Guid.NewGuid().ToString();
-            var state = testServer.Services.GetRequiredService<IPerseveranceStateService>();
-            await mediator.Publish(new LandCommand(connectionId, new LandOptions()));
-            var guid = state.Cache.Keys.First();
-            await mediator.Publish(new MoveCommand(connectionId, guid, "F"));
+            var newGuid = Guid.NewGuid();
+            await mediator.Publish(new LandCommand(connectionId, new LandOptions()
+            {
+                Guid = newGuid,
+                X = 0,
+                Y = 0,
+                H = 5,
+                W = 5,
+                O = 5
+            }));
+            await mediator.Publish(new MoveCommand(connectionId, newGuid, "F"));
 
-            state.Cache[guid].Should().NotBeNull();
-
+            var cache = await state.GetStateAsync(newGuid, CancellationToken.None);
+            cache.Should().NotBeNull();
+            cache.W.Should().Be(4);
+            cache.H.Should().Be(4);
+            cache.Obstacles.Should().HaveCount(5);
         }
     }
 }

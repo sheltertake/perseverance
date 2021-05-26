@@ -32,8 +32,13 @@ import { SimpleStateService } from './services/simple-state.service';
     </main>
   `,
   styles: [`
-    .navbar { position:fixed; width:100%; }
-    main{ height: 100vh;  }
+    nav{ position:fixed; width:100%; }
+    main{ 
+      max-width: 100vh; 
+      border:1px dashed #999; 
+      margin: auto;
+      width: 50%; 
+    }
     .flex-container {
         padding: 0;
         margin: 0;
@@ -41,7 +46,6 @@ import { SimpleStateService } from './services/simple-state.service';
         display: flex;
         flex-flow: row;
         justify-content: space-around;
-     
         line-height:30px;
     }
     .flex-item {

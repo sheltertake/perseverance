@@ -25,7 +25,7 @@ namespace Perseverance.Proxy.Host.Handlers
 
         public Task Handle(MoveCommand notification, CancellationToken cancellationToken)
         {
-            return _roverService.MoveAsync(notification.Guid, notification.Command).ContinueWith(x =>
+            return _roverService.MoveAsync(notification.Guid, notification.Command, cancellationToken).ContinueWith(x =>
             {
                 _mediator.Publish(new StateEvent(notification.ConnectionId, x.Result), cancellationToken);
             }, cancellationToken);
