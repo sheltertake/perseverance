@@ -20,6 +20,7 @@ namespace Perseverance.Proxy.Host
             try
             {
                 Log.Information("Starting web host");
+                Log.Information(Environment.GetEnvironmentVariable("USE_AZURE_SIGNALR"));
                 CreateHostBuilder(args).Build().Run();
             }
             catch (Exception ex)

@@ -9,5 +9,6 @@ services:
         environment:
             - ASPNETCORE_ENVIRONMENT=Develop
             - ASPNETCORE_URLS=http://0.0.0.0:5000
+            - USE_AZURE_SIGNALR=false
         ports:
             - "5000:5000"    

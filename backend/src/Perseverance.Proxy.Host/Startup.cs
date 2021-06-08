@@ -1,3 +1,4 @@
+using System;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -34,7 +35,7 @@ namespace Perseverance.Proxy.Host
                 hubOptions.EnableDetailedErrors = true;
             }).AddNewtonsoftJsonProtocol();
             
-            if (!_env.IsDevelopment())
+            if (!_env.IsDevelopment() && Environment.GetEnvironmentVariable("USE_AZURE_SIGNALR") != "false")
             {
                 builder.AddAzureSignalR();
             }
